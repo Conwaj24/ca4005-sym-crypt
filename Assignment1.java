@@ -9,21 +9,12 @@ class Assignment1 {//} implements Assignment1Interface {
 		);
 	}
 
-	byte[] generateKey(byte[] password, byte[] salt) {
-		byte[] key = new byte[password.length + salt.length];
-		for(int i = 0; i <password.length; i++) {
-			key[i] = password[i];
-		}
-		for(int i = 0; i <salt.length; i++) {
-			key[i + password.length - 1] = salt[i];
-		}
-
-		for (int i = 0; i<2; i++) {
-			key = sha256sum(key);
-			//System.out.println(something);
-		}
-
-		return key;
+	/**
+	 * The password (p) and salt (s) will be concatenated together (p||s) and hashed 200 times using SHA-256.
+	 * The resulting digest (H200(p||s)) will then be used as your 256-bit AES key (k).
+	 */
+	static byte[] generateKey(byte[] password, byte[] salt) {
+		return successiveSha256sum( concatenate(password, salt), 200 );
 	 }
 	
 //	/* AES encryption of the given plaintext using the given iv and key */
