@@ -35,17 +35,11 @@ class Assignment1 {//} implements Assignment1Interface {
 	 
 //	/* result of raising the given base to the power of the given exponent using the given modulus */
 
-	static boolean nthBit(BigInteger i, int n) {
-		return !BigInteger.ZERO.equals(
-				i.and(biggify(2)).pow(i.bitLength() - 1 - n)
-		);
-	}
-
 	static BigInteger modExp(BigInteger base, BigInteger exponent, BigInteger modulus) {
 		BigInteger y = biggify(1);
 		for(int i = exponent.bitLength()-1; i >= 0; i--) {
 			y = y.multiply(y).remainder(modulus);
-			if (nthBit(base, i))
+			if (exponent.testBit(i))
 				y = y.multiply(base).remainder(modulus);
 			System.out.println(y);
 
