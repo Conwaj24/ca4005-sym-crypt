@@ -1,13 +1,21 @@
 import java.security.*;
 import static utils.Utils.*;
+import utils.JavaIsACruelJokeException;
 import java.util.Arrays;
 import java.math.BigInteger;
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.*;
 
 class Assignment1 {//} implements Assignment1Interface {
 	public static void main( String args[] ) {
-		System.out.println(modExp( biggify(123), biggify(5), biggify(511)));
+		final BigInteger publicModulus = new BigInteger("137652547120171623831577580754018445993017304218165206272713364463792456896637113989329788703535234386034180124255655381988418908310009282516131873615137567204485155842487301882808765314419120804845170697501924015753046752363774869922950979952518437590219507132881645941023261582043811465190751407051926698921");
+		final BigInteger encryptionExponent = biggify(65537);
+
+		byte[] key = generateKey(utf8Bytes("password"), utf8Bytes("salt"));
+
 		System.out.println(
-				generateKey(utf8Bytes("password"), utf8Bytes("salt"))
+				key
 		);
 	}
 
@@ -18,33 +26,62 @@ class Assignment1 {//} implements Assignment1Interface {
 	static byte[] generateKey(byte[] password, byte[] salt) {
 		return successiveSha256sum( concatenate(password, salt), 200 );
 	 }
-	
-//	static byte[] encryptAES(byte[] plaintext, byte[] iv, byte[] key) {
-//	
-//	}
-//	
+
+	static byte[] encryptAES(byte[] plaintext, byte[] iv, byte[] key) {
+		try {
+			return getAESCipher(Cipher.ENCRYPT_MODE, iv, key).doFinal(pad(plaintext, 128));
+		} catch (Exception e) {
+			die(e);
+		}
+		return plaintext;
+
+	}
+//
 //	/* AES decryption of the given ciphertext using the given iv and key */
 //	byte[] decryptAES(byte[] ciphertext, byte[] iv, byte[] key) {
-//	
+//
 //	}
-//			
+//
 //	/* encryption of the given plaintext using the given encryption exponent and modulus */
 //	byte[] encryptRSA(byte[] plaintext, BigInteger exponent, BigInteger modulus) {
-//	
+//
 //	}
-	 
-//	/* result of raising the given base to the power of the given exponent using the given modulus */
 
+//	/* result of raising the given base to the power of the given exponent using the given modulus */
 	static BigInteger modExp(BigInteger base, BigInteger exponent, BigInteger modulus) {
 		BigInteger y = biggify(1);
 		for(int i = exponent.bitLength()-1; i >= 0; i--) {
 			y = y.multiply(y).remainder(modulus);
 			if (exponent.testBit(i))
 				y = y.multiply(base).remainder(modulus);
-			System.out.println(y);
-
 		}
 		return y;
+	}
+
+	static Cipher getAESCipher(int mode, byte[] initializationVector, byte[] key) throws JavaIsACruelJokeException {
+		try {
+			Cipher c = Cipher.getInstance("AES/CBC/NoPadding");
+			c.init(
+					mode,
+					new SecretKeySpec(key, "AES"),
+					new IvParameterSpec(initializationVector)
+				);
+			return c;
+		}
+		catch(
+				InvalidKeyException |
+				InvalidAlgorithmParameterException |
+				NoSuchPaddingException |
+				NoSuchAlgorithmException e
+		)
+			{ throw new JavaIsACruelJokeException(); }
+	}
+
+	static byte[] pad(byte[] data, int bits) {
+		return concatenate(
+				data,
+				new byte[ bits - data.length % bitsToBytes(bits) ]
+		);
 	}
 /*
 */
