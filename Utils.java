@@ -46,16 +46,6 @@ public class Utils {
 			(byte)value};
 	}
 
-	/* taken from https://stackoverflow.com/a/4408124/7158192 */
-	public static byte[] convertFrom2sComplement(byte[] b) {
-		if (b[0] != 0)
-			return b;
-
-		byte[] tmp = new byte[b.length - 1];
-		System.arraycopy(b, 1, tmp, 0, tmp.length);
-		return tmp;
-	}
-
 	/* taken from https://stackoverflow.com/a/80503/7158192 */
 	public static <T> T concatenate(T a, T b) {
 		if (!a.getClass().isArray() || !b.getClass().isArray()) {
@@ -83,6 +73,10 @@ public class Utils {
 		System.arraycopy(b, 0, out, al, bl);
 
 		return out;
+	}
+
+	public static int bitsToBytes(int bits) {
+		return bits / 8 + ((bits % 8 == 0) ? 0 : 1); //divide by 8 and round up
 	}
 
 }
