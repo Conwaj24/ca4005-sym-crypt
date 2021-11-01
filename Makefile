@@ -1,7 +1,7 @@
 TITLE = Assignment1
 
 
-${TITLE}.class: Utils.class Assignment1Interface.class
+${TITLE}.class: Utils.class Assignment1Interface.class JavaIsACruelJokeException.class
 
 %.class: %.java
 	javac -classpath . -d . $<
