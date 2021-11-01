@@ -3,6 +3,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.lang.reflect.Array;
+import java.math.BigInteger;
 
 public class Utils {
 	public static byte[] sha256sum (byte[] b) {
@@ -29,6 +30,30 @@ public class Utils {
 
 	public static byte[] utf8Bytes (String s) {
 		return s.getBytes(StandardCharsets.UTF_8);
+	}
+
+	public static BigInteger biggify(int i) {
+		return new BigInteger(intToByteArray(i));
+	}
+
+
+	/* taken from https://stackoverflow.com/a/2183259/7158192 */
+	public static final byte[] intToByteArray(int value) {
+	return new byte[] {
+			(byte)(value >>> 24),
+			(byte)(value >>> 16),
+			(byte)(value >>> 8),
+			(byte)value};
+	}
+
+	/* taken from https://stackoverflow.com/a/4408124/7158192 */
+	public static byte[] convertFrom2sComplement(byte[] b) {
+		if (b[0] != 0)
+			return b;
+
+		byte[] tmp = new byte[b.length - 1];
+		System.arraycopy(b, 1, tmp, 0, tmp.length);
+		return tmp;
 	}
 
 	/* taken from https://stackoverflow.com/a/80503/7158192 */
@@ -59,6 +84,5 @@ public class Utils {
 
 		return out;
 	}
-
 
 }
