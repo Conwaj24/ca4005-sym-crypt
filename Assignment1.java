@@ -28,7 +28,7 @@ class Assignment1 implements Assignment1Interface {
 		byte[] decyphered = ass.decryptAES(ciphertext, initializationVector, key);
 
 		System.out.println(
-			utf8String(decyphered)
+			utf8String(ass.encryptRSA(plaintext, encryptionExponent, publicModulus))
 		);
 	}
 
