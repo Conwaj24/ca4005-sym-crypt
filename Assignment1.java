@@ -31,11 +31,10 @@ class Assignment1 implements Assignment1Interface {
 		byte[] decyphered = ass.decryptAES(ciphertext, initializationVector, key);
 
 		System.out.println(
-			//utf8String(ciphertext)
-			plaintext.length
+			bytesToHex(ciphertext)
 		);
 
-		byte[] encrypted_password = ass.encryptRSA(password, encryptionExponent, publicModulus);
+		writeFile("Password.txt", bytesToHex(ass.encryptRSA(password, encryptionExponent, publicModulus)));
 	}
 
 	/**
