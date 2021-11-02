@@ -6,7 +6,6 @@ import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.nio.file.*;
 import java.io.IOException;
-import java.nio.charset.MalformedInputException;
 
 public class Utils {
 	public static byte[] sha256sum (byte[] b) {
@@ -107,10 +106,11 @@ public class Utils {
 		return hexStringToByteArray(readFile(path));
 	}
 
-	/* taken from https://stackoverflow.com/a/140861 */
-	/* s must be an even-length string. */
+	/* taken from https://stackoverflow.com/a/140861 and fixed a stupid bug with odd length strings */
 	public static byte[] hexStringToByteArray(String s) {
 		int len = s.length();
+		if (len % 2 == 1)
+			len--;
 		byte[] data = new byte[len / 2];
 		for (int i = 0; i < len; i += 2) {
 		data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i+1), 16));
