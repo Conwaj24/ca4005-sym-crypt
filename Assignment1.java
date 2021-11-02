@@ -7,15 +7,20 @@ import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.*;
 
-class Assignment1 {//} implements Assignment1Interface {
+class Assignment1 implements Assignment1Interface {
 	public static void main( String args[] ) {
 		final BigInteger publicModulus = new BigInteger("137652547120171623831577580754018445993017304218165206272713364463792456896637113989329788703535234386034180124255655381988418908310009282516131873615137567204485155842487301882808765314419120804845170697501924015753046752363774869922950979952518437590219507132881645941023261582043811465190751407051926698921");
 		final BigInteger encryptionExponent = biggify(65537);
 
-		byte[] key = generateKey(utf8Bytes("password"), utf8Bytes("salt"));
+		byte[] initializationVector = readFile("IV.txt");
+
+		Assignment1 ass = new Assignment1();
+		
+
+		byte[] key = ass.generateKey(utf8Bytes("password"), utf8Bytes("salt"));
 
 		System.out.println(
-				key
+				initializationVector.length
 		);
 	}
 
@@ -23,11 +28,11 @@ class Assignment1 {//} implements Assignment1Interface {
 	 * The password (p) and salt (s) will be concatenated together (p||s) and hashed 200 times using SHA-256.
 	 * The resulting digest (H200(p||s)) will then be used as your 256-bit AES key (k).
 	 */
-	static byte[] generateKey(byte[] password, byte[] salt) {
+	public byte[] generateKey(byte[] password, byte[] salt) {
 		return successiveSha256sum( concatenate(password, salt), 200 );
 	 }
 
-	static byte[] encryptAES(byte[] plaintext, byte[] iv, byte[] key) {
+	public byte[] encryptAES(byte[] plaintext, byte[] iv, byte[] key) {
 		try {
 			return getAESCipher(Cipher.ENCRYPT_MODE, iv, key).doFinal(pad(plaintext, 128));
 		} catch (Exception e) {
@@ -36,19 +41,21 @@ class Assignment1 {//} implements Assignment1Interface {
 		return plaintext;
 
 	}
-//
-//	/* AES decryption of the given ciphertext using the given iv and key */
-//	byte[] decryptAES(byte[] ciphertext, byte[] iv, byte[] key) {
-//
-//	}
-//
-//	/* encryption of the given plaintext using the given encryption exponent and modulus */
-//	byte[] encryptRSA(byte[] plaintext, BigInteger exponent, BigInteger modulus) {
-//
-//	}
 
-//	/* result of raising the given base to the power of the given exponent using the given modulus */
-	static BigInteger modExp(BigInteger base, BigInteger exponent, BigInteger modulus) {
+	public byte[] decryptAES(byte[] ciphertext, byte[] iv, byte[] key) {
+		try {
+			return getAESCipher(Cipher.DECRYPT_MODE, iv, key).doFinal(ciphertext);
+		} catch (Exception e) {
+			die(e);
+		}
+		return ciphertext;
+	}
+
+	public byte[] encryptRSA(byte[] plaintext, BigInteger exponent, BigInteger modulus) {
+		return modExp(new BigInteger(plaintext), exponent, modulus).toByteArray();
+	}
+
+	public BigInteger modExp(BigInteger base, BigInteger exponent, BigInteger modulus) {
 		BigInteger y = biggify(1);
 		for(int i = exponent.bitLength()-1; i >= 0; i--) {
 			y = y.multiply(y).remainder(modulus);

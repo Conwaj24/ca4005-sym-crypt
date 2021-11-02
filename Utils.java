@@ -4,6 +4,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.nio.file.*;
+import java.io.IOException;
 
 public class Utils {
 	public static byte[] sha256sum (byte[] b) {
@@ -35,7 +37,6 @@ public class Utils {
 	public static BigInteger biggify(int i) {
 		return new BigInteger(intToByteArray(i));
 	}
-
 
 	/* taken from https://stackoverflow.com/a/2183259/7158192 */
 	public static final byte[] intToByteArray(int value) {
@@ -77,6 +78,15 @@ public class Utils {
 
 	public static int bitsToBytes(int bits) {
 		return bits / 8 + ((bits % 8 == 0) ? 0 : 1); //divide by 8 and round up
+	}
+
+	public static byte[] readFile(String path) {
+		try {
+			return Files.readAllBytes(FileSystems.getDefault().getPath(path));
+		} catch ( IOException e ) {
+			die(e);
+		}
+		return new byte[16];
 	}
 
 }
