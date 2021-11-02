@@ -12,24 +12,30 @@ class Assignment1 implements Assignment1Interface {
 		final BigInteger publicModulus = new BigInteger("137652547120171623831577580754018445993017304218165206272713364463792456896637113989329788703535234386034180124255655381988418908310009282516131873615137567204485155842487301882808765314419120804845170697501924015753046752363774869922950979952518437590219507132881645941023261582043811465190751407051926698921");
 		final BigInteger encryptionExponent = biggify(65537);
 
-		byte[] initializationVector = pad(hexDecodeFile("IV.txt"), 128);
+		byte[] initializationVector = fixedLength(hexDecodeFile("IV.txt"), 128);
+		byte[] salt = fixedLength(hexDecodeFile("Salt.txt"), 128);
+		byte[] password = utf8Bytes("00000000000000000000000000000000");
+
 		
 		byte[] plaintext;
 		try {
-			plaintext = readFileBytes(args[0]); //readFile may not be guarenteed to use UTF_8 encoding, but it works on my machine
+			plaintext = readFileBytes(args[0]);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			plaintext = utf8Bytes(e.toString());
 		}
 
 		Assignment1 ass = new Assignment1();
 
-		byte[] key = ass.generateKey(utf8Bytes("password"), utf8Bytes("salt"));
+		byte[] key = ass.generateKey(password, salt);
 		byte[] ciphertext = ass.encryptAES(plaintext, initializationVector, key);
 		byte[] decyphered = ass.decryptAES(ciphertext, initializationVector, key);
 
 		System.out.println(
-			utf8String(ass.encryptRSA(plaintext, encryptionExponent, publicModulus))
+			//utf8String(ciphertext)
+			plaintext.length
 		);
+
+		byte[] encrypted_password = ass.encryptRSA(password, encryptionExponent, publicModulus);
 	}
 
 	/**
@@ -92,10 +98,14 @@ class Assignment1 implements Assignment1Interface {
 			{ throw new JavaIsACruelJokeException(); }
 	}
 
-	static byte[] pad(byte[] data, int bits) {
+	static byte[] pad (byte[] data, int bits) {
+		return concatenate( data, new byte[ bits - data.length % bitsToBytes(bits) ] );
+	}
+
+	static byte[] fixedLength (byte[] data, int bits) {
 		int bytes = bitsToBytes(bits);
 		if (bytes > data.length)
-			return concatenate( data, new byte[ bits - data.length % bitsToBytes(bits) ] );
+			return concatenate( data, new byte[bytes - data.length] );
 		return Arrays.copyOfRange(data, 0, bytes);
 	}
 /*
