@@ -34,6 +34,10 @@ public class Utils {
 		return s.getBytes(StandardCharsets.UTF_8);
 	}
 
+	public static String utf8String (byte[] b) {
+		return new String(b, StandardCharsets.UTF_8);
+	}
+
 	public static BigInteger biggify(int i) {
 		return new BigInteger(intToByteArray(i));
 	}

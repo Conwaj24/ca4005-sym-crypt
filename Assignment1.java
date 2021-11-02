@@ -13,14 +13,22 @@ class Assignment1 implements Assignment1Interface {
 		final BigInteger encryptionExponent = biggify(65537);
 
 		byte[] initializationVector = readFile("IV.txt");
+		
+		byte[] plaintext;
+		try {
+			plaintext = readFile(args[0]); //readFile may not be guarenteed to use UTF_8 encoding, but it works on my machine
+		} catch (ArrayIndexOutOfBoundsException e) {
+			plaintext = utf8Bytes(e.toString());
+		}
 
 		Assignment1 ass = new Assignment1();
-		
 
 		byte[] key = ass.generateKey(utf8Bytes("password"), utf8Bytes("salt"));
+		byte[] ciphertext = ass.encryptAES(plaintext, initializationVector, key);
+		byte[] decyphered = ass.decryptAES(ciphertext, initializationVector, key);
 
 		System.out.println(
-				initializationVector.length
+			utf8String(decyphered)
 		);
 	}
 
