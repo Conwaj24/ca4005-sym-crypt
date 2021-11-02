@@ -103,11 +103,11 @@ public class Utils {
 	}
 
 	public static byte[] hexDecodeFile(String path) {
-		return hexStringToByteArray(readFile(path));
+		return hexDecode(readFile(path));
 	}
 
 	/* taken from https://stackoverflow.com/a/140861 and fixed a stupid bug with odd length strings */
-	public static byte[] hexStringToByteArray(String s) {
+	public static byte[] hexDecode(String s) {
 		int len = s.length();
 		if (len % 2 == 1)
 			len--;
@@ -120,7 +120,7 @@ public class Utils {
 
 	/* taken from https://stackoverflow.com/a/9855338 */
 	private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
-	public static String bytesToHex(byte[] bytes) {
+	public static String hexEncode(byte[] bytes) {
 		byte[] hexChars = new byte[bytes.length * 2];
 		for (int j = 0; j < bytes.length; j++) {
 			int v = bytes[j] & 0xFF;

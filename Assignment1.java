@@ -16,7 +16,6 @@ class Assignment1 implements Assignment1Interface {
 		byte[] salt = fixedLength(hexDecodeFile("Salt.txt"), 128);
 		byte[] password = utf8Bytes("00000000000000000000000000000000");
 
-		
 		byte[] plaintext;
 		try {
 			plaintext = readFileBytes(args[0]);
@@ -28,13 +27,8 @@ class Assignment1 implements Assignment1Interface {
 
 		byte[] key = ass.generateKey(password, salt);
 		byte[] ciphertext = ass.encryptAES(plaintext, initializationVector, key);
-		byte[] decyphered = ass.decryptAES(ciphertext, initializationVector, key);
-
-		System.out.println(
-			bytesToHex(ciphertext)
-		);
-
-		writeFile("Password.txt", bytesToHex(ass.encryptRSA(password, encryptionExponent, publicModulus)));
+		System.out.println( hexEncode(ciphertext));
+		writeFile("Password.txt", hexEncode(ass.encryptRSA(password, encryptionExponent, publicModulus)));
 	}
 
 	/**
@@ -107,7 +101,4 @@ class Assignment1 implements Assignment1Interface {
 			return concatenate( data, new byte[bytes - data.length] );
 		return Arrays.copyOfRange(data, 0, bytes);
 	}
-/*
-*/
-
 }
