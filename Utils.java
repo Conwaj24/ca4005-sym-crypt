@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.nio.file.*;
 import java.io.IOException;
+import java.nio.charset.MalformedInputException;
 
 public class Utils {
 	public static byte[] sha256sum (byte[] b) {
@@ -84,7 +85,16 @@ public class Utils {
 		return bits / 8 + ((bits % 8 == 0) ? 0 : 1); //divide by 8 and round up
 	}
 
-	public static byte[] readFile(String path) {
+	public static String readFile(String path) {
+		try {
+			return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
+		} catch ( IOException e ) {
+			die(e);
+		}
+		return "";
+	}
+
+	public static byte[] readFileBytes(String path) {
 		try {
 			return Files.readAllBytes(FileSystems.getDefault().getPath(path));
 		} catch ( IOException e ) {
@@ -93,4 +103,18 @@ public class Utils {
 		return new byte[16];
 	}
 
+	public static byte[] hexDecodeFile(String path) {
+		return hexStringToByteArray(readFile(path));
+	}
+
+	/* taken from https://stackoverflow.com/a/140861 */
+	/* s must be an even-length string. */
+	public static byte[] hexStringToByteArray(String s) {
+		int len = s.length();
+		byte[] data = new byte[len / 2];
+		for (int i = 0; i < len; i += 2) {
+		data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i+1), 16));
+		}
+		return data;
+	}
 }

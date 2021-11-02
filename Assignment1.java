@@ -12,11 +12,12 @@ class Assignment1 implements Assignment1Interface {
 		final BigInteger publicModulus = new BigInteger("137652547120171623831577580754018445993017304218165206272713364463792456896637113989329788703535234386034180124255655381988418908310009282516131873615137567204485155842487301882808765314419120804845170697501924015753046752363774869922950979952518437590219507132881645941023261582043811465190751407051926698921");
 		final BigInteger encryptionExponent = biggify(65537);
 
-		byte[] initializationVector = readFile("IV.txt");
+		byte[] initializationVector = hexDecodeFile("IV.txt");
+		System.out.println( initializationVector.length );
 		
 		byte[] plaintext;
 		try {
-			plaintext = readFile(args[0]); //readFile may not be guarenteed to use UTF_8 encoding, but it works on my machine
+			plaintext = readFileBytes(args[0]); //readFile may not be guarenteed to use UTF_8 encoding, but it works on my machine
 		} catch (ArrayIndexOutOfBoundsException e) {
 			plaintext = utf8Bytes(e.toString());
 		}
@@ -93,10 +94,7 @@ class Assignment1 implements Assignment1Interface {
 	}
 
 	static byte[] pad(byte[] data, int bits) {
-		return concatenate(
-				data,
-				new byte[ bits - data.length % bitsToBytes(bits) ]
-		);
+		return concatenate( data, new byte[ bits - data.length % bitsToBytes(bits) ] );
 	}
 /*
 */
